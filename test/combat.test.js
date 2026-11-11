@@ -2,8 +2,18 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   NPC_PACTS,
+  NPC_WAR,
+  aiAttackNote,
   attackBlock,
   defenseOf,
+  npcAttackType,
+  npcCooldownSeconds,
+  npcHumanOpen,
+  npcNetworthOk,
+  npcPickTarget,
+  npcSendCounts,
+  npcSendPercent,
+  npcTargetScore,
   fuzzAmount,
   hitScale,
   isProtected,
@@ -171,4 +181,56 @@ test("a battle brief keeps the tally and still renders an old one-line report", 
   assert.deepEqual(old.gained, []);
   assert.equal(old.morale, -8);
   assert.equal(battleBrief({ kind: "spy", outcome: "scouted", text: "A spy reports." }), null);
+  const ai = battleBrief({
+    kind: "battle",
+    outcome: "loss",
+    you_attacked: false,
+    attacker_npc: true,
+    attack_type: "plunder",
+    attacker: "Ashford Keep",
+    text: "Ashford Keep plundered 40 gold and 10 food.",
+    gold: 40,
+    food: 10,
+  });
+  assert.equal(ai.aiNote, "An established house marched.");
+  assert.equal(aiAttackNote({ youAttacked: true, attackerNpc: true }), "");
+  assert.equal(aiAttackNote({ you_attacked: false, attacker_npc: false }), "");
+});
+
+test("an established house marches on a timer and keeps a garrison", () => {
+  assert.equal(npcCooldownSeconds(0), NPC_WAR.cooldownMinSec);
+  assert.equal(npcCooldownSeconds(50), 3 * 3600);
+  assert.equal(npcCooldownSeconds(99), 7200 + Math.floor(7200 * 99 / 100));
+  assert.ok(npcCooldownSeconds(99) < 4 * 3600);
+  assert.equal(npcSendPercent(0), 35);
+  assert.equal(npcSendPercent(99), 50);
+  const sent = npcSendCounts({ militia: 10, knights: 2, archers: 0 }, 50);
+  assert.equal(sent.militia, 5);
+  assert.equal(sent.knights, 1);
+  assert.equal(npcSendCounts({ militia: 1 }, 50), null);
+  assert.equal(npcHumanOpen(0), true);
+  assert.equal(npcHumanOpen(1), true);
+  assert.equal(npcHumanOpen(2), false);
+});
+
+test("established houses prefer a crown they can beat and drop a hopeless fight", () => {
+  assert.equal(npcNetworthOk(1000, 400, false), true);
+  assert.equal(npcNetworthOk(1000, 390, false), false);
+  assert.equal(npcNetworthOk(1000, 1400, false), true);
+  assert.equal(npcNetworthOk(1000, 1410, false), false);
+  assert.equal(npcNetworthOk(1000, 250, true), true);
+  assert.equal(npcNetworthOk(1000, 1810, true), false);
+  assert.equal(npcTargetScore({ ratio: 34, human: true, sameRealm: true, jitter: 30 }), null);
+  assert.equal(npcAttackType(120, 0), "conquest");
+  assert.equal(npcAttackType(120, 60), "plunder");
+  assert.equal(npcAttackType(80, 0), "plunder");
+  assert.equal(npcAttackType(80, 50), "razing");
+  assert.equal(npcAttackType(40, 0), "plunder");
+  assert.equal(npcAttackType(40, 70), "razing");
+  const human = { name: "Highcrest", score: npcTargetScore({ ratio: 90, human: true, sameRealm: true, jitter: 0 }) };
+  const peer = { name: "Qasira", score: npcTargetScore({ ratio: 100, human: false, sameRealm: false, jitter: 0 }) };
+  const hopeless = { name: "Ashford Keep", score: npcTargetScore({ ratio: 20, human: false, sameRealm: true, jitter: 30 }) };
+  assert.equal(hopeless.score, null);
+  assert.equal(npcPickTarget([peer, hopeless, human]).name, "Highcrest");
+  assert.equal(npcPickTarget([hopeless]), null);
 });

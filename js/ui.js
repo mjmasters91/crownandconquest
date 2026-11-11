@@ -1293,6 +1293,7 @@ function battleBody(report) {
     { class: "tally" },
     el("p", { class: `outcome ${brief.victory ? "win" : "loss"}`, text: brief.victory ? "Victory" : "Defeat" }),
     el("h3", { text: heading }),
+    brief.aiNote ? el("p", { class: "eyebrow", text: brief.aiNote }) : null,
     brief.text ? el("p", { text: brief.text }) : null,
     el("div", { class: "casualty" },
       el("strong", { text: brief.youAttacked ? "Gained" : (brief.victory ? "Held" : "Lost") }),

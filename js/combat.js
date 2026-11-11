@@ -1,6 +1,7 @@
 /**
  * Combat, spies, and alliances.
- * Integer math here is repeated in crown/sql/0002_crown_combat.sql.
+ * Integer math here is repeated in sql/0002_crown_combat.sql.
+ * NPC march choices are repeated in sql/0008_npc_attacks.sql (NPC_WAR).
  * A shared realm is not an alliance. Only members of the same pact are immune.
  */
 
@@ -349,7 +350,115 @@ export function battleBrief(report) {
     enemyLoss,
     returning,
     detailed: Boolean(yourLoss || enemyLoss || returning || gained.length || spoils.buildings || spoils.razed),
+    aiNote: aiAttackNote(report),
   };
+}
+
+/** Shown on a War Room report when an established house (NPC) marched on you. */
+export function aiAttackNote(report) {
+  if (!report) return "";
+  const youAttacked = report.you_attacked !== false && report.youAttacked !== false;
+  const npc = report.attacker_npc === true || report.attackerNpc === true;
+  if (!youAttacked && npc) return "An established house marched.";
+  return "";
+}
+
+/**
+ * How often an established house marches, and whom it will march on.
+ * sql/0008_npc_attacks.sql repeats these numbers.
+ * The 6-hour cap of 2 is applied to every defender, not only humans.
+ * A roll is an integer 0–99 unless a function says otherwise.
+ */
+export const NPC_WAR = {
+  cooldownMinSec: 2 * 3600,
+  cooldownExtraSec: 2 * 3600,
+  humanWindowSec: 6 * 3600,
+  humanCap: 2,
+  sendMinPct: 35,
+  sendExtraPct: 16,
+  nwMinPct: 40,
+  nwMaxPct: 140,
+  nwWideMinPct: 25,
+  nwWideMaxPct: 180,
+  hopelessRatio: 35,
+  favoredRatio: 120,
+  evenRatio: 80,
+  humanBonus: 40,
+  sameRealmBonus: 15,
+  jitterMax: 30,
+  maxArmies: 3,
+  incomeTickCap: 12,
+};
+
+export function npcCooldownSeconds(roll) {
+  const r = clampRoll(roll);
+  return NPC_WAR.cooldownMinSec + Math.floor(NPC_WAR.cooldownExtraSec * r / 100);
+}
+
+export function npcSendPercent(roll) {
+  const r = clampRoll(roll);
+  return NPC_WAR.sendMinPct + Math.floor(NPC_WAR.sendExtraPct * r / 100);
+}
+
+export function npcSendCounts(units, percent) {
+  const pct = Math.max(0, Math.min(100, Math.floor(Number(percent) || 0)));
+  const sent = {};
+  let total = 0;
+  let home = 0;
+  for (const id of UNIT_ORDER) {
+    const have = Math.max(0, Math.floor(Number(units?.[id]) || 0));
+    let n = Math.floor(have * pct / 100);
+    if (n > 5000) n = 5000;
+    if (n > have) n = have;
+    sent[id] = n;
+    total += n;
+    home += have - n;
+  }
+  if (total < 1 || home < 1) return null;
+  return sent;
+}
+
+export function npcNetworthOk(attackerNw, defenderNw, wide = false) {
+  const pct = Math.floor(Math.max(0, defenderNw) * 100 / Math.max(1, attackerNw));
+  const min = wide ? NPC_WAR.nwWideMinPct : NPC_WAR.nwMinPct;
+  const max = wide ? NPC_WAR.nwWideMaxPct : NPC_WAR.nwMaxPct;
+  return pct >= min && pct <= max;
+}
+
+export function npcHumanOpen(recentHits) {
+  return Math.max(0, Math.floor(Number(recentHits) || 0)) < NPC_WAR.humanCap;
+}
+
+export function npcTargetScore({ ratio, human, sameRealm, jitter }) {
+  const odds = Math.floor(Number(ratio) || 0);
+  if (odds < NPC_WAR.hopelessRatio) return null;
+  const shake = Math.max(0, Math.min(NPC_WAR.jitterMax, Math.floor(Number(jitter) || 0)));
+  return odds
+    + (human ? NPC_WAR.humanBonus : 0)
+    + (sameRealm ? NPC_WAR.sameRealmBonus : 0)
+    + shake;
+}
+
+export function npcPickTarget(candidates) {
+  let best = null;
+  for (const row of candidates || []) {
+    if (!row || row.score == null) continue;
+    if (!best || row.score > best.score) best = row;
+  }
+  return best;
+}
+
+export function npcAttackType(ratio, roll) {
+  const odds = Math.floor(Number(ratio) || 0);
+  const r = clampRoll(roll);
+  if (odds >= NPC_WAR.favoredRatio) return r < 60 ? "conquest" : "plunder";
+  if (odds >= NPC_WAR.evenRatio) return r < 50 ? "plunder" : "razing";
+  return r < 70 ? "plunder" : "razing";
+}
+
+function clampRoll(roll) {
+  const n = Math.floor(Number(roll) || 0);
+  return Math.max(0, Math.min(99, n));
 }
 
 export function oddsBand(offense, defense) {
