@@ -21,12 +21,13 @@
         <a href="/news/" data-nav="news">News</a>
         <a href="/forums/" data-nav="forums">Forums</a>
       </nav>
-      <button type="button" class="btn" id="account-open">Sign in</button>
+      <a class="btn" id="account-link" href="/account/">Log in / Sign up</a>
+      <button type="button" class="btn" id="header-logout" hidden>Log out</button>
     </header>
     <main class="wrap page-head">
       <p class="eyebrow">The hall</p>
       <h1>Forums</h1>
-      <p class="lede">Reading is open. Posting uses the same sign-in as Toon Orbit Battle. Stewards can pin, lock, and delete.</p>
+      <p class="lede">Reading is open. Posting needs an <a href="/account/">account</a>, the same one as the Windows game. Stewards can pin, lock, and delete.</p>
       <div id="forum-root" class="section">
         <div class="halls">
           <article class="card"><h3>Announcements</h3><p>Releases and notes from the stewards.</p></article>
@@ -40,23 +41,7 @@
     <footer class="wrap foot">
       <p>Halls: Announcements, General, Strategy, Bug Reports, Suggestions.</p>
     </footer>
-    <dialog id="account-dialog">
-      <div class="dialog-card card">
-        <h2>Enter</h2>
-        <p id="account-status"></p>
-        <form id="sign-in">
-          <label>Username<input name="username" autocomplete="username" maxlength="16" required /></label>
-          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
-          <div class="row">
-            <button class="btn primary" type="submit">Sign in</button>
-            <button class="btn ghost" type="button" data-close>Close</button>
-          </div>
-        </form>
-        <div class="row">
-          <button class="btn" type="button" id="sign-out" hidden>Sign out</button>
-        </div>
-      </div>
-    </dialog>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
     <script type="module" src="/js/site.js"></script>
   </body>

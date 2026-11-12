@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6e7c9" />
+    <title>Account · Crown &amp; Conquest</title>
+    <meta name="description" content="Sign up or log in to Crown & Conquest. One account for the site, the forums, and the Windows game." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/css/site.css" />
+  </head>
+  <body data-page="account">
+    <header class="top">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#e8c56b" d="M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z"/><path fill="#f8ecd6" d="M8 23h16v3H8z"/></svg>
+        <span>Crown &amp; Conquest</span>
+      </a>
+      <nav>
+        <a href="/" data-nav="home">Home</a>
+        <a href="/download/" data-nav="download">Download</a>
+        <a href="/news/" data-nav="news">News</a>
+        <a href="/forums/" data-nav="forums">Forums</a>
+      </nav>
+      <a class="btn" id="account-link" href="/account/">Log in / Sign up</a>
+      <button type="button" class="btn" id="header-logout" hidden>Log out</button>
+    </header>
+    <main class="wrap page-head">
+      <p class="eyebrow">One account</p>
+      <h1>Account</h1>
+      <p class="lede">The same sign-in for this site, the forums, and the Windows game.</p>
+      <section id="signed-in" class="panel section" hidden>
+        <h2>Signed in</h2>
+        <p>Username: <strong id="signed-in-name">Account</strong></p>
+        <div class="row">
+          <button type="button" class="btn" id="account-logout">Log out</button>
+        </div>
+      </section>
+      <div id="account-forms" class="split section">
+        <form id="signup" class="panel">
+          <h2>Sign up</h2>
+          <label>Username<input name="username" autocomplete="username" maxlength="20" required /></label>
+          <p class="muted">3–20 letters, numbers, or underscores.</p>
+          <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" required /></label>
+          <label>Confirm password<input name="confirm" type="password" autocomplete="new-password" required /></label>
+          <div class="row">
+            <button class="btn primary" type="submit">Create account</button>
+          </div>
+          <p id="signup-status" class="notice" hidden></p>
+        </form>
+        <div class="stack">
+          <form id="login" class="panel">
+            <h2 id="login-heading">Log in</h2>
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+            <div class="row">
+              <button class="btn primary" type="submit">Log in</button>
+            </div>
+            <p id="login-status" class="notice" hidden></p>
+          </form>
+          <form id="forgot" class="panel">
+            <h2>Forgot password</h2>
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <div class="row">
+              <button class="btn" type="submit">Send reset link</button>
+            </div>
+            <p id="forgot-status" class="notice" hidden></p>
+          </form>
+        </div>
+      </div>
+    </main>
+    <footer class="wrap foot">
+      <p>A taken username is refused before the account is created.</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+    <script type="module" src="/js/site.js"></script>
+  </body>
+</html>

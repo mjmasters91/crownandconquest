@@ -1,5 +1,9 @@
+import { signupFailureMessage, validateEmail, validatePassword, validateUsername } from "./account-rules.js";
+
 const URL = "https://orbzytpukjywqkbkbtcs.supabase.co";
 const PUBLISHABLE_KEY = "sb_publishable_g6lbXdi9r10i5d6TvHquaw_drhIG58X";
+const ACCOUNT_URL = "https://crownandconquest.net/account/";
+const RESET_URL = "https://crownandconquest.net/account/reset/";
 
 const page = document.body.dataset.page || "home";
 let client = null;
@@ -34,10 +38,6 @@ function missingLedger(error) {
   return /PGRST202|PGRST205|42883|42P01|does not exist|schema cache|Could not find/i.test(text);
 }
 
-function playerEmail(username) {
-  return String(username || "").trim().toLowerCase() + "@players.toonorbit.app";
-}
-
 function publicName(name) {
   const text = String(name || "").trim();
   if (!text || text.includes("@")) return "";
@@ -49,7 +49,11 @@ function db() {
   const lib = globalThis.supabase;
   if (!lib?.createClient) return null;
   client = lib.createClient(URL, PUBLISHABLE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: page === "account" || page === "reset",
+    },
   });
   return client;
 }
@@ -76,90 +80,171 @@ async function refreshWho() {
       admin: Boolean(who.data.admin),
     };
   } else if (data.session) {
-    me = { signed_in: true, username: "", admin: false };
+    me = { signed_in: true, username: publicName(data.session.user?.user_metadata?.username), admin: false };
   }
   return me;
 }
 
 function paintAccountButton() {
-  const button = document.getElementById("account-open");
-  if (!button) return;
-  button.textContent = me.signed_in ? me.username || "Account" : "Sign in";
+  const link = document.getElementById("account-link");
+  const out = document.getElementById("header-logout");
+  if (link) {
+    const name = publicName(me.username);
+    link.textContent = me.signed_in ? (name || "Account") : "Log in / Sign up";
+  }
+  if (out) out.hidden = !me.signed_in;
+}
+
+async function logOut() {
+  await db()?.auth.signOut();
+  me = { signed_in: false, username: "", admin: false };
+  paintAccountButton();
+  paintAccountHome();
+  await rerender();
 }
 
 function bindAccount() {
-  const dialog = document.getElementById("account-dialog");
-  const open = document.getElementById("account-open");
-  const form = document.getElementById("sign-in");
-  const status = document.getElementById("account-status");
-  const out = document.getElementById("sign-out");
-  if (!dialog || !open) return;
-  open.addEventListener("click", () => {
-    paintAccountStatus();
-    dialog.showModal();
-  });
-  dialog.querySelectorAll("[data-close]").forEach((node) => {
-    node.addEventListener("click", () => dialog.close());
-  });
-  form?.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const api = db();
-    if (!api) {
-      status.textContent = "The account library did not load.";
-      return;
-    }
-    const data = new FormData(form);
-    const username = String(data.get("username") || "").trim();
-    const password = String(data.get("password") || "");
-    if (!/^[A-Za-z0-9_]{3,16}$/.test(username)) {
-      status.textContent = "Use 3-16 letters, numbers, or underscores.";
-      return;
-    }
-    if (!password) {
-      status.textContent = "Enter a password.";
-      return;
-    }
-    status.textContent = "Signing in…";
-    const { error } = await api.auth.signInWithPassword({ email: playerEmail(username), password });
-    if (error) {
-      status.textContent = /invalid login|invalid credentials/i.test(error.message || "")
-        ? "Wrong username or password."
-        : (error.message || "Could not sign in.");
-      return;
-    }
-    await refreshWho();
-    paintAccountButton();
-    paintAccountStatus();
-    dialog.close();
-    await rerender();
-  });
-  out?.addEventListener("click", async () => {
-    await db()?.auth.signOut();
-    me = { signed_in: false, username: "", admin: false };
-    paintAccountButton();
-    paintAccountStatus();
-    dialog.close();
-    await rerender();
-  });
+  document.getElementById("header-logout")?.addEventListener("click", () => logOut());
+  document.getElementById("account-logout")?.addEventListener("click", () => logOut());
+  document.getElementById("signup")?.addEventListener("submit", signUp);
+  document.getElementById("login")?.addEventListener("submit", logIn);
+  document.getElementById("forgot")?.addEventListener("submit", forgotPassword);
+  document.getElementById("new-password")?.addEventListener("submit", setNewPassword);
 }
 
-function paintAccountStatus() {
-  const status = document.getElementById("account-status");
-  const form = document.getElementById("sign-in");
-  const out = document.getElementById("sign-out");
-  if (!status) return;
+function paintAccountHome() {
+  const home = document.getElementById("signed-in");
+  const forms = document.getElementById("account-forms");
+  if (!home && !forms) return;
+  const name = publicName(me.username);
+  const label = document.getElementById("signed-in-name");
   if (me.signed_in) {
-    const name = publicName(me.username);
-    status.textContent = name
-      ? (me.admin ? `Signed in as ${name}, steward.` : `Signed in as ${name}.`)
-      : "Signed in.";
-    if (form) form.hidden = true;
-    if (out) out.hidden = false;
+    if (label) label.textContent = name || "Account";
+    if (home) home.hidden = false;
+    if (forms) forms.hidden = true;
   } else {
-    status.textContent = "The same username and password as Toon Orbit Battle.";
-    if (form) form.hidden = false;
-    if (out) out.hidden = true;
+    if (home) home.hidden = true;
+    if (forms) forms.hidden = false;
   }
+}
+
+function setStatus(id, text) {
+  const node = document.getElementById(id);
+  if (!node) return;
+  node.textContent = text || "";
+  node.hidden = !text;
+}
+
+async function signUp(event) {
+  event.preventDefault();
+  const api = db();
+  if (!api) {
+    setStatus("signup-status", "The account library did not load.");
+    return;
+  }
+  const data = new FormData(event.currentTarget);
+  const name = validateUsername(data.get("username"));
+  if (name.error) return setStatus("signup-status", name.error);
+  const email = validateEmail(data.get("email"));
+  if (email.error) return setStatus("signup-status", email.error);
+  const pass = validatePassword(data.get("password"), data.get("confirm"));
+  if (pass.error) return setStatus("signup-status", pass.error);
+  setStatus("signup-status", "Checking that name…");
+  const free = await rpc("ccs_username_available", { p_name: name.username });
+  if (!free.ok) {
+    setStatus("signup-status", free.missing ? "Username check is not on the server yet." : free.error);
+    return;
+  }
+  if (free.data !== true) {
+    setStatus("signup-status", "That username is taken.");
+    return;
+  }
+  setStatus("signup-status", "Creating the account…");
+  const { data: created, error } = await api.auth.signUp({
+    email: email.email,
+    password: pass.password,
+    options: { data: { username: name.username }, emailRedirectTo: ACCOUNT_URL },
+  });
+  if (error) {
+    setStatus("signup-status", signupFailureMessage(error.message));
+    return;
+  }
+  if (!created?.session) {
+    setStatus("signup-status", "Check your email to confirm.");
+    return;
+  }
+  await refreshWho();
+  paintAccountButton();
+  paintAccountHome();
+  setStatus("signup-status", "");
+}
+
+async function logIn(event) {
+  event.preventDefault();
+  const api = db();
+  if (!api) {
+    setStatus("login-status", "The account library did not load.");
+    return;
+  }
+  const data = new FormData(event.currentTarget);
+  const email = validateEmail(data.get("email"));
+  if (email.error) return setStatus("login-status", email.error);
+  const pass = validatePassword(data.get("password"));
+  if (pass.error) return setStatus("login-status", pass.error);
+  setStatus("login-status", "Signing in…");
+  const { error } = await api.auth.signInWithPassword({ email: email.email, password: pass.password });
+  if (error) {
+    setStatus("login-status", /invalid login|invalid credentials/i.test(error.message || "")
+      ? "Wrong email or password."
+      : (error.message || "Could not sign in."));
+    return;
+  }
+  await refreshWho();
+  paintAccountButton();
+  paintAccountHome();
+  setStatus("login-status", "");
+}
+
+async function forgotPassword(event) {
+  event.preventDefault();
+  const api = db();
+  if (!api) {
+    setStatus("forgot-status", "The account library did not load.");
+    return;
+  }
+  const email = validateEmail(new FormData(event.currentTarget).get("email"));
+  if (email.error) return setStatus("forgot-status", email.error);
+  setStatus("forgot-status", "Sending the reset link…");
+  const { error } = await api.auth.resetPasswordForEmail(email.email, { redirectTo: RESET_URL });
+  if (error) {
+    setStatus("forgot-status", error.message || "Could not send the reset link.");
+    return;
+  }
+  setStatus("forgot-status", "Check your email for the reset link.");
+}
+
+async function setNewPassword(event) {
+  event.preventDefault();
+  const api = db();
+  if (!api) {
+    setStatus("reset-status", "The account library did not load.");
+    return;
+  }
+  const fields = new FormData(event.currentTarget);
+  const pass = validatePassword(fields.get("password"), fields.get("confirm"));
+  if (pass.error) return setStatus("reset-status", pass.error);
+  const { data } = await api.auth.getSession();
+  if (!data?.session) {
+    setStatus("reset-status", "This reset link is missing or expired. Request a new one from the account page.");
+    return;
+  }
+  setStatus("reset-status", "Saving the new password…");
+  const { error } = await api.auth.updateUser({ password: pass.password });
+  if (error) {
+    setStatus("reset-status", error.message || "Could not change the password.");
+    return;
+  }
+  setStatus("reset-status", "Password updated. You can return to the valley.");
 }
 
 async function rerender() {
@@ -301,7 +386,13 @@ async function renderCategory(root, slug) {
     category.blurb ? el("p", { class: "lede", text: category.blurb }) : null,
     me.signed_in && !stewardOnly ? threadComposer(category.slug) : null,
     me.signed_in && stewardOnly ? el("p", { class: "muted", text: "Only a steward posts in Announcements." }) : null,
-    !me.signed_in ? el("p", { class: "muted", text: "Sign in to start a thread." }) : null,
+    !me.signed_in ? el("p", { class: "muted" },
+      "To start a thread, ",
+      el("a", { href: "/account/#login" }, "log in"),
+      " or ",
+      el("a", { href: "/account/#signup" }, "sign up"),
+      ".",
+    ) : null,
     threads.length
       ? el("div", { class: "stack" }, threads.map((thread) => el("article", { class: "thread" },
         el("header", {},
@@ -389,7 +480,15 @@ async function renderThread(root, id) {
 }
 
 function replyBox(thread) {
-  if (!me.signed_in) return el("p", { class: "muted", text: "Sign in to reply." });
+  if (!me.signed_in) {
+    return el("p", { class: "muted" },
+      "To reply, ",
+      el("a", { href: "/account/#login" }, "log in"),
+      " or ",
+      el("a", { href: "/account/#signup" }, "sign up"),
+      ".",
+    );
+  }
   if (thread.locked && !me.admin) return el("p", { class: "muted", text: "This thread is locked." });
   return el("form", { class: "composer", onsubmit: (event) => sendReply(event, thread.id) },
     el("h3", { text: "Reply" }),
@@ -446,6 +545,6 @@ document.querySelectorAll(".top nav a").forEach((link) => {
 bindAccount();
 refreshWho().then(() => {
   paintAccountButton();
-  paintAccountStatus();
+  paintAccountHome();
   return rerender();
 });

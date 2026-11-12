@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6e7c9" />
+    <title>Reset password · Crown &amp; Conquest</title>
+    <meta name="description" content="Choose a new Crown & Conquest password." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/css/site.css" />
+  </head>
+  <body data-page="reset">
+    <header class="top">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#e8c56b" d="M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z"/><path fill="#f8ecd6" d="M8 23h16v3H8z"/></svg>
+        <span>Crown &amp; Conquest</span>
+      </a>
+      <nav>
+        <a href="/" data-nav="home">Home</a>
+        <a href="/download/" data-nav="download">Download</a>
+        <a href="/news/" data-nav="news">News</a>
+        <a href="/forums/" data-nav="forums">Forums</a>
+      </nav>
+      <a class="btn" id="account-link" href="/account/">Log in / Sign up</a>
+      <button type="button" class="btn" id="header-logout" hidden>Log out</button>
+    </header>
+    <main class="wrap page-head">
+      <p class="eyebrow">Account</p>
+      <h1>New password</h1>
+      <p class="lede">Open this page from the link in your email, then choose a new password.</p>
+      <form id="new-password" class="panel section">
+        <label>New password<input name="password" type="password" autocomplete="new-password" required /></label>
+        <label>Confirm password<input name="confirm" type="password" autocomplete="new-password" required /></label>
+        <div class="row">
+          <button class="btn primary" type="submit">Save password</button>
+          <a class="btn ghost" href="/account/">Back to account</a>
+        </div>
+        <p id="reset-status" class="notice" hidden></p>
+      </form>
+    </main>
+    <footer class="wrap foot">
+      <p><a href="/account/">Request a new reset link</a> if this one has expired.</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+    <script type="module" src="/js/site.js"></script>
+  </body>
+</html>
