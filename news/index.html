@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6e7c9" />
+    <title>News · Crown &amp; Conquest</title>
+    <meta name="description" content="Patch notes and news for Crown & Conquest." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/css/site.css" />
+  </head>
+  <body data-page="news">
+    <header class="top">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#e8c56b" d="M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z"/><path fill="#f8ecd6" d="M8 23h16v3H8z"/></svg>
+        <span>Crown &amp; Conquest</span>
+      </a>
+      <nav>
+        <a href="/" data-nav="home">Home</a>
+        <a href="/download/" data-nav="download">Download</a>
+        <a href="/news/" data-nav="news">News</a>
+        <a href="/forums/" data-nav="forums">Forums</a>
+      </nav>
+      <button type="button" class="btn" id="account-open">Sign in</button>
+    </header>
+    <main class="wrap page-head">
+      <p class="eyebrow">Notices</p>
+      <h1>News</h1>
+      <p class="lede">Patch notes live here. Stewards post them after signing in.</p>
+      <div id="news-root" class="stack section"></div>
+      <article class="post" id="news-fallback">
+        <header>
+          <h2>v0.1.0 is ready to download</h2>
+          <p class="who">Crown &amp; Conquest · Nov 12, 2026</p>
+        </header>
+        <p class="body">Crown &amp; Conquest v0.1.0, the first public Windows build, is on the download page.
+
+It is a skirmish against the AI. Play as the Vale Wardens or the Rime Clans. Villagers gather food, wood, gold, and stone, a Homestead raises the population cap, and the match starts in the Seed Age. Pikes, archers, and cavalry counter one another. Maps are Small, Medium, and Large. Large is 96 by 96.
+
+The zip holds CrownAndConquest.exe. Windows SmartScreen may warn because the build is not signed. Choose More info, then Run anyway.
+
+Two hearths cannot share one valley.</p>
+      </article>
+    </main>
+    <footer class="wrap foot">
+      <p>Sign in with the same username as Toon Orbit Battle. Stewards can publish from this page once the news ledger is applied.</p>
+    </footer>
+    <dialog id="account-dialog">
+      <div class="dialog-card card">
+        <h2>Enter</h2>
+        <p id="account-status"></p>
+        <form id="sign-in">
+          <label>Username<input name="username" autocomplete="username" maxlength="16" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <div class="row">
+            <button class="btn primary" type="submit">Sign in</button>
+            <button class="btn ghost" type="button" data-close>Close</button>
+          </div>
+        </form>
+        <div class="row">
+          <button class="btn" type="button" id="sign-out" hidden>Sign out</button>
+        </div>
+      </div>
+    </dialog>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+    <script type="module" src="/js/site.js"></script>
+  </body>
+</html>

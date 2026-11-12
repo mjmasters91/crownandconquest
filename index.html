@@ -2,22 +2,127 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#e7d3aa" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6e7c9" />
     <title>Crown &amp; Conquest</title>
-    <meta
-      name="description"
-      content="Crown & Conquest is a medieval realm game. Rule one castle, build and explore, and measure your crown by networth."
-    />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E"
-    />
-    <link rel="stylesheet" href="css/crown.css" />
+    <meta name="description" content="Crown & Conquest is a 2D isometric real-time strategy game for Windows. Two hearths cannot share one valley." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/css/site.css" />
   </head>
-  <body>
-    <div id="app"></div>
+  <body data-page="home">
+    <header class="top">
+      <a class="brand" href="/">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#e8c56b" d="M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z"/><path fill="#f8ecd6" d="M8 23h16v3H8z"/></svg>
+        <span>Crown &amp; Conquest</span>
+      </a>
+      <nav>
+        <a href="/" data-nav="home">Home</a>
+        <a href="/download/" data-nav="download">Download</a>
+        <a href="/news/" data-nav="news">News</a>
+        <a href="/forums/" data-nav="forums">Forums</a>
+      </nav>
+      <button type="button" class="btn" id="account-open">Sign in</button>
+    </header>
+    <main>
+      <div class="wrap hero">
+        <div>
+          <p class="eyebrow">Windows · v0.1.0</p>
+          <h1>Crown &amp; Conquest</h1>
+          <p class="lede">Two hearths cannot share one valley.</p>
+          <p>A 2D isometric real-time strategy game. Gather food, wood, gold, and stone, raise a base, and meet the other hearth in the field. Play as the Vale Wardens or the Rime Clans.</p>
+          <div class="hero-actions">
+            <a class="btn primary" href="/downloads/CrownAndConquest-windows.zip">Download for Windows</a>
+            <a class="btn ghost" href="/download/">Version, install, controls</a>
+          </div>
+        </div>
+        <figure class="frame">
+          <img src="/images/menu.png" alt="Main menu of Crown and Conquest, version 0.1.0, with Vale Wardens and Rime Clans over a green and blue valley." />
+        </figure>
+      </div>
+      <section class="wrap section">
+        <h2>In the valley</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Villagers</h3>
+            <p>Tillers gather food, wood, gold, and stone. A Homestead raises the population cap before the clearing fills.</p>
+          </article>
+          <article class="card">
+            <h3>Two ages</h3>
+            <p>A match opens in the Seed Age. One age remains beyond it, and the base you built is what carries you there.</p>
+          </article>
+          <article class="card">
+            <h3>Counters</h3>
+            <p>Pikes, archers, and cavalry answer one another. Bring the wrong arm to a fight and the other hearth will count it.</p>
+          </article>
+          <article class="card">
+            <h3>Skirmish</h3>
+            <p>Face the AI as the Vale Wardens or the Rime Clans. Normal difficulty is the Rime Clans pressing the valley.</p>
+          </article>
+          <article class="card">
+            <h3>Three maps</h3>
+            <p>Small, Medium, and Large. A Large valley is 96 by 96, with forest, water, and room to lose an army.</p>
+          </article>
+          <article class="card">
+            <h3>Your hands</h3>
+            <p>WASD scrolls the map. Left-drag selects. Right-click commands a move, a gather, or an attack.</p>
+          </article>
+        </div>
+      </section>
+      <section class="wrap section">
+        <h2>From v0.1.0</h2>
+        <div class="gallery">
+          <figure class="frame">
+            <img src="/images/menu.png" alt="The carved main menu, titled Crown and Conquest, version 0.1.0." />
+            <figcaption>Main menu</figcaption>
+          </figure>
+          <figure class="frame">
+            <img src="/images/opening.png" alt="Three tillers beside a new homestead in a forest clearing, Seed Age, large map." />
+            <figcaption>The first clearing</figcaption>
+          </figure>
+          <figure class="frame">
+            <img src="/images/economy.png" alt="Tillers gathering berries and wood around several small buildings." />
+            <figcaption>Food and wood</figcaption>
+          </figure>
+          <figure class="frame">
+            <img src="/images/battle.png" alt="Vale soldiers with spears meeting Rime soldiers among the trees." />
+            <figcaption>The lines meet</figcaption>
+          </figure>
+          <figure class="frame">
+            <img src="/images/large-map.png" alt="A wide isometric valley of forest, a pond, and a blue coast, with the minimap at the lower right." />
+            <figcaption>Large, 96 by 96</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+    <section class="band">
+      <div class="wrap">
+        <p class="eyebrow">Windows 10 or 11</p>
+        <h2>Take the valley home</h2>
+        <p>v0.1.0 is one zip, 38.2 MB, with CrownAndConquest.exe inside.</p>
+        <p><a class="btn primary" href="/download/">Download page</a></p>
+      </div>
+    </section>
+    <footer class="wrap foot">
+      <p>Crown &amp; Conquest. Original work. No borrowed names, art, or sounds.</p>
+    </footer>
+    <dialog id="account-dialog">
+      <div class="dialog-card card">
+        <h2>Enter</h2>
+        <p id="account-status"></p>
+        <form id="sign-in">
+          <label>Username<input name="username" autocomplete="username" maxlength="16" required /></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+          <div class="row">
+            <button class="btn primary" type="submit">Sign in</button>
+            <button class="btn ghost" type="button" data-close>Close</button>
+          </div>
+        </form>
+        <div class="row">
+          <button class="btn" type="button" id="sign-out" hidden>Sign out</button>
+        </div>
+      </div>
+    </dialog>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="/js/site.js"></script>
   </body>
 </html>
