@@ -147,11 +147,11 @@ begin
     raise exception 'This account is banned.';
   end if;
   if name is null then
-    select split_part(u.email, '@', 1) into name
-    from auth.users u
-    where u.id = uid;
+    select pr.username into name
+    from public.profiles pr
+    where pr.id = uid;
   end if;
-  name := left(trim(coalesce(name, 'player')), 32);
+  name := left(trim(coalesce(name, 'player-' || left(uid::text, 6))), 32);
   if name = '' then
     name := 'player';
   end if;

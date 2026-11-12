@@ -38,6 +38,12 @@ function playerEmail(username) {
   return String(username || "").trim().toLowerCase() + "@players.toonorbit.app";
 }
 
+function publicName(name) {
+  const text = String(name || "").trim();
+  if (!text || text.includes("@")) return "";
+  return text;
+}
+
 function db() {
   if (client) return client;
   const lib = globalThis.supabase;
@@ -63,14 +69,14 @@ async function refreshWho() {
   const { data } = await api.auth.getSession();
   if (!data?.session) return me;
   const who = await rpc("ccs_whoami");
-  if (who.ok && who.data) {
+  if (who.ok && who.data?.signed_in) {
     me = {
-      signed_in: Boolean(who.data.signed_in),
-      username: who.data.username || "",
+      signed_in: true,
+      username: publicName(who.data.username),
       admin: Boolean(who.data.admin),
     };
-  } else if (data.session.user?.email) {
-    me = { signed_in: true, username: data.session.user.email.split("@")[0], admin: false };
+  } else if (data.session) {
+    me = { signed_in: true, username: "", admin: false };
   }
   return me;
 }
@@ -143,7 +149,10 @@ function paintAccountStatus() {
   const out = document.getElementById("sign-out");
   if (!status) return;
   if (me.signed_in) {
-    status.textContent = me.admin ? `Signed in as ${me.username}, steward.` : `Signed in as ${me.username}.`;
+    const name = publicName(me.username);
+    status.textContent = name
+      ? (me.admin ? `Signed in as ${name}, steward.` : `Signed in as ${name}.`)
+      : "Signed in.";
     if (form) form.hidden = true;
     if (out) out.hidden = false;
   } else {
@@ -188,7 +197,7 @@ function newsCard(post) {
   return el("article", { class: "post" },
     el("header", {},
       el("h2", { text: post.title || "Notice" }),
-      el("p", { class: "who", text: `${post.author_name || "Crown & Conquest"} · ${when(post.created_at)}` }),
+      el("p", { class: "who", text: `${publicName(post.author_name) || "Crown & Conquest"} · ${when(post.created_at)}` }),
     ),
     el("p", { class: "body", text: post.body || "" }),
     me.admin
@@ -300,7 +309,7 @@ async function renderCategory(root, slug) {
           thread.locked ? el("span", { class: "chip", text: "Locked" }) : null,
         ),
         el("h3", {}, el("a", { class: "thread-link", href: `/forums/?t=${thread.id}`, text: thread.title })),
-        el("p", { class: "who", text: `${thread.author_name} · ${when(thread.created_at)} · ${thread.replies || 0} replies` }),
+        el("p", { class: "who", text: `${publicName(thread.author_name) || "player"} · ${when(thread.created_at)} · ${thread.replies || 0} replies` }),
       )))
       : el("p", { class: "muted", text: "No threads in this hall yet." }),
   );
@@ -358,7 +367,7 @@ async function renderThread(root, id) {
           thread.locked ? el("span", { class: "chip", text: "Locked" }) : null,
         ),
         el("h2", { text: thread.title }),
-        el("p", { class: "who", text: `${thread.author_name} · ${when(thread.created_at)}` }),
+        el("p", { class: "who", text: `${publicName(thread.author_name) || "player"} · ${when(thread.created_at)}` }),
       ),
       el("p", { class: "body", text: thread.body || "" }),
       me.admin ? el("div", { class: "row" },
@@ -369,7 +378,7 @@ async function renderThread(root, id) {
     ),
     replies.length
       ? el("div", { class: "stack" }, replies.map((reply) => el("article", { class: "thread" },
-        el("p", { class: "who", text: `${reply.author_name} · ${when(reply.created_at)}` }),
+        el("p", { class: "who", text: `${publicName(reply.author_name) || "player"} · ${when(reply.created_at)}` }),
         el("p", { class: "body", text: reply.body || "" }),
         me.admin ? el("div", { class: "row" },
           el("button", { class: "btn small ghost", type: "button", text: "Delete reply", onclick: () => deleteReply(reply.id) })) : null,
