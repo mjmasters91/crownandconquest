@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#f6e7c9" />
     <title>Download · Crown &amp; Conquest</title>
-    <meta name="description" content="Download Crown & Conquest v0.4.2 for Windows." />
+    <meta name="description" content="Download Crown & Conquest v0.4.3 for Windows." />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/css/site.css" />
   </head>
@@ -26,18 +26,18 @@
     </header>
     <main class="wrap page-head">
       <p class="eyebrow">Latest build</p>
-      <h1>v0.4.2 for Windows</h1>
+      <h1>v0.4.3 for Windows</h1>
       <p class="lede">One zip. Unzip it and run CrownAndConquest.exe.</p>
       <p><a class="btn primary" href="/downloads/CrownAndConquest-windows.zip">Download CrownAndConquest-windows.zip</a></p>
       <div class="split section">
         <article class="panel">
           <h2>This file</h2>
           <dl class="meta">
-            <dt>Version</dt><dd>0.4.2</dd>
+            <dt>Version</dt><dd>0.4.3</dd>
             <dt>File</dt><dd class="file">CrownAndConquest-windows.zip</dd>
-            <dt>Size</dt><dd>44.2 MB (46,361,296 bytes)</dd>
+            <dt>Size</dt><dd>44.2 MB (46,365,031 bytes)</dd>
             <dt>Inside</dt><dd>CrownAndConquest.exe, about 113 MB on disk</dd>
-            <dt>MD5</dt><dd class="file">686a3230dcfb3e1732a61e4322b16fb1</dd>
+            <dt>MD5</dt><dd class="file">aad5f2b562fa1976cc9bb294d537982e</dd>
             <dt>System</dt><dd>Windows 10 or Windows 11, 64-bit</dd>
           </dl>
           <h2>Install</h2>
@@ -53,8 +53,10 @@
           <h2>Controls</h2>
           <ul class="plain">
             <li>WASD scrolls the valley. The map edge eases into the scroll.</li>
-            <li>Edge scrolling slides the map when the mouse touches any screen edge or corner. Settings has a speed slider and an on/off switch.</li>
+            <li>Edge scrolling slides the map when the mouse touches any screen edge or corner, including along the resource bar and the command panel. Corners scroll diagonally. Settings has a speed slider and an on/off switch. The camera can reach the north and south ends of the map.</li>
+            <li>Hold the right mouse button and drag to slide the map. A quick right-click still gives an order.</li>
             <li>Middle-mouse drag pans the map.</li>
+            <li>Settings has an optional switch, Left-drag pans map. It is off by default, so a left-drag still draws a selection box. When it is on, a left-drag that starts on empty ground slides the map.</li>
             <li>Display is Windowed, Borderless fullscreen, or Fullscreen. Borderless is the default. Alt+Enter or F11 toggles. In fullscreen the cursor stays in the window, including on a second monitor.</li>
             <li>Left-drag selects tillers and soldiers. A click selects one.</li>
             <li>Right-click commands them: ground to move, an enemy to attack, berries, trees, gold, or stone to gather.</li>
@@ -65,7 +67,15 @@
             <li>Hover a unit, building, or resource for its name, owner, hit points or amount, and role. A building under construction shows its percent.</li>
             <li>Hover a command button for its name, hotkey, cost, and role. The letter on the button is the hotkey.</li>
             <li>Build a Homestead before the population cap stops you.</li>
-            <li>The minimap sits at the lower right.</li>
+            <li>The minimap sits at the lower right. Drag on it to move the camera.</li>
+          </ul>
+          <h2>v0.4.3</h2>
+          <ul class="plain">
+            <li>Edge scrolling works at the top and bottom of the screen. The resource bar and the command panel no longer block it. Corners scroll diagonally. The camera can reach the north and south ends of the map.</li>
+            <li>Hold the right mouse button and drag to slide the map. A quick right-click still gives orders.</li>
+            <li>Middle-drag still pans.</li>
+            <li>An optional Settings switch, Left-drag pans map. Off by default, so a left-drag still draws a selection box. On, a left-drag that starts on empty ground slides the map.</li>
+            <li>Drag on the minimap to move the camera.</li>
           </ul>
           <h2>v0.4.2</h2>
           <ul class="plain">
@@ -96,7 +106,7 @@
       </div>
     </main>
     <footer class="wrap foot">
-      <p>v0.4.2 · Windows 10 or 11 · one unsigned exe inside the zip.</p>
+      <p>v0.4.3 · Windows 10 or 11 · one unsigned exe inside the zip.</p>
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
