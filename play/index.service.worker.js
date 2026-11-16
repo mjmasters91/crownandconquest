@@ -4,7 +4,7 @@
 // Incrementing CACHE_VERSION will kick off the install event and force
 // previously cached resources to be updated from the network.
 /** @type {string} */
-const CACHE_VERSION = '1794850527|2263237';
+const CACHE_VERSION = '1794855265|2406207';
 /** @type {string} */
 const CACHE_PREFIX = 'Crown & Conquest-sw-cache-';
 const CACHE_NAME = CACHE_PREFIX + CACHE_VERSION;
@@ -17,10 +17,11 @@ const ENSURE_CROSSORIGIN_ISOLATION_HEADERS = false;
 const CACHED_FILES = ["index.html","index.js","index.offline.html","index.icon.png","index.apple-touch-icon.png","index.audio.worklet.js","index.audio.position.worklet.js"];
 // Files that we might not want the user to preload, and will only be cached on first load.
 /** @type {string[]} */
-const CACHEABLE_FILES = ["index.wasm","index.pck"];
+const CACHEABLE_FILES = ["index.v040.wasm","index.v040.pck","index.js?v=040"];
 const FULL_CACHE = CACHED_FILES.concat(CACHEABLE_FILES);
 
 self.addEventListener('install', (event) => {
+	self.skipWaiting();
 	event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CACHED_FILES)));
 });
 
@@ -33,6 +34,16 @@ self.addEventListener('activate', (event) => {
 	).then(function () {
 		// Enable navigation preload if available.
 		return ('navigationPreload' in self.registration) ? self.registration.navigationPreload.enable() : Promise.resolve();
+	}).then(function () {
+		return self.clients.claim();
+	}).then(function () {
+		return self.clients.matchAll({ type: 'window' });
+	}).then(function (clients) {
+		clients.forEach(function (client) {
+			if (client.navigate) {
+				client.navigate(client.url);
+			}
+		});
 	}));
 });
 
