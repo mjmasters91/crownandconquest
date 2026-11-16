@@ -194,6 +194,12 @@ h2.chunk { -webkit-text-stroke-width: 5px; text-shadow: 0 5px 0 #0d2136; }
   padding: 0.85rem 1.3rem;
   font-size: 1.25rem;
 }
+.btn.web {
+  background: linear-gradient(180deg, #ffffff 0%, #9ae2ff 46%, #2aa4e0 100%);
+  color: var(--navy);
+  padding: 0.85rem 1.3rem;
+  font-size: 1.25rem;
+}
 .btn.ghost {
   background: transparent;
   color: inherit;
