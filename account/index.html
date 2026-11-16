@@ -3,16 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#2c2158" />
+    <meta name="theme-color" content="#49c4f5" />
     <title>Account · Crown &amp; Conquest</title>
     <meta name="description" content="Sign up or log in to Crown & Conquest. One account for the site and the forums." />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%238d3140' d='M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z'/%3E%3Cpath fill='%23e8c56b' d='M8 23h16v3H8z'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&amp;display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/css/site.css" />
   </head>
   <body data-page="account">
-    <header class="top">
+        <header class="top">
       <a class="brand" href="/">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><path fill="#e8c56b" d="M5 23 7.2 11l5.2 6L16 7l3.6 10 5.2-6L27 23z"/><path fill="#f8ecd6" d="M8 23h16v3H8z"/></svg>
+        <svg viewBox="0 0 64 64" aria-hidden="true"><path fill="#ffd24a" stroke="#16324f" stroke-width="3" stroke-linejoin="round" d="M8 44 14 22l8 12 10-20 10 20 8-12 6 22z"/><rect x="8" y="44" width="48" height="8" rx="3" fill="#ffd24a" stroke="#16324f" stroke-width="3"/></svg>
         <span>Crown &amp; Conquest</span>
       </a>
       <nav>
@@ -24,10 +27,15 @@
       <a class="btn" id="account-link" href="/account/">Log in / Sign up</a>
       <button type="button" class="btn" id="header-logout" hidden>Log out</button>
     </header>
-    <main class="wrap page-head">
-      <p class="eyebrow">One account</p>
-      <h1>Account</h1>
-      <p class="lede">One account for this site and the forums.</p>
+    <div class="page-banner">
+      <div class="wrap">
+        <p class="eyebrow">One account</p>
+        <h1 class="chunk">Account</h1>
+        <p class="lede">One account for this site and the forums.</p>
+      </div>
+      <svg class="wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true"><path fill="#fff6df" d="M0 30c200 36 320 36 480 0s280-36 480 0 280 36 480 0v50H0z"/></svg>
+    </div>
+    <main class="wrap sheet">
       <section id="signed-in" class="panel section" hidden>
         <h2>Signed in</h2>
         <p>Username: <strong id="signed-in-name">Account</strong></p>
@@ -69,9 +77,37 @@
         </div>
       </div>
     </main>
-    <footer class="wrap foot">
-      <p>A taken username is refused before the account is created.</p>
-      <p><a href="/rts/">The earlier valley game</a> · <a href="/legacy/">The browser game</a></p>
+        <footer class="site-foot">
+      <div class="wrap foot-grid">
+        <div>
+          <h2>Crown &amp; Conquest</h2>
+          <p>A portrait 1v1 lane card battler. The save stays on your device.</p>
+        </div>
+        <div>
+          <h2>Play</h2>
+          <ul>
+            <li><a href="/downloads/CrownAndConquest-Arena-windows.zip">Windows</a></li>
+            <li><a href="/downloads/CrownAndConquest-android.apk">Android</a></li>
+            <li><a href="/download/">Install notes</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Site</h2>
+          <ul>
+            <li><a href="/news/">News</a></li>
+            <li><a href="/forums/">Forums</a></li>
+            <li><a href="/account/">Account</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Older games</h2>
+          <ul>
+            <li><a href="/rts/">The valley strategy game</a></li>
+            <li><a href="/legacy/">The browser game</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap"><p class="legal">Original work. No borrowed names, art, or sounds.</p></div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
     <script type="module" src="/js/site.js"></script>

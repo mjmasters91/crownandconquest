@@ -542,6 +542,17 @@ document.querySelectorAll(".top nav a").forEach((link) => {
   if (link.dataset.nav === page) link.setAttribute("aria-current", "page");
 });
 
+document.querySelectorAll("[data-reel]").forEach((scroller) => {
+  const box = scroller.closest(".reel-box");
+  const distance = () => Math.max(220, Math.round(scroller.clientWidth * 0.8));
+  box?.querySelector("[data-reel-prev]")?.addEventListener("click", () => {
+    scroller.scrollBy({ left: -distance(), behavior: "smooth" });
+  });
+  box?.querySelector("[data-reel-next]")?.addEventListener("click", () => {
+    scroller.scrollBy({ left: distance(), behavior: "smooth" });
+  });
+});
+
 bindAccount();
 refreshWho().then(() => {
   paintAccountButton();
