@@ -53,6 +53,7 @@ function db() {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: page === "account" || page === "reset",
+      storageKey: "sb-orbzytpukjywqkbkbtcs-auth-token",
     },
   });
   return client;
@@ -177,6 +178,7 @@ async function signUp(event) {
   paintAccountButton();
   paintAccountHome();
   setStatus("signup-status", "");
+  followLinkReturn();
 }
 
 async function logIn(event) {
@@ -203,6 +205,79 @@ async function logIn(event) {
   paintAccountButton();
   paintAccountHome();
   setStatus("login-status", "");
+  followLinkReturn();
+}
+
+const LINK_RETURN = "cc_link_return";
+
+function followLinkReturn() {
+  const back = sessionStorage.getItem(LINK_RETURN);
+  if (!back) return;
+  sessionStorage.removeItem(LINK_RETURN);
+  let url;
+  try {
+    url = new URL(back, location.origin);
+  } catch {
+    return;
+  }
+  const code = url.searchParams.get("code") || "";
+  if (url.origin !== location.origin) return;
+  if (url.pathname !== "/link" && url.pathname !== "/link/") return;
+  if (!/^[0-9a-fA-F]{32}$/.test(code)) return;
+  location.assign(`${url.pathname}?code=${code}`);
+}
+
+function linkCode() {
+  return new URLSearchParams(location.search).get("code") || "";
+}
+
+async function bindLink() {
+  if (page !== "link") return;
+  const status = document.getElementById("link-status");
+  const panel = document.getElementById("link-panel");
+  const codeNode = document.getElementById("link-code");
+  const approve = document.getElementById("link-approve");
+  const code = linkCode();
+  const say = (text) => {
+    if (status) status.textContent = text || "";
+  };
+  if (!/^[0-9a-fA-F]{32}$/.test(code)) {
+    if (panel) panel.hidden = true;
+    say("This sign-in link is invalid.");
+    return;
+  }
+  const api = db();
+  if (!api) {
+    if (panel) panel.hidden = true;
+    say("The account library did not load.");
+    return;
+  }
+  const { data } = await api.auth.getSession();
+  if (!data?.session) {
+    sessionStorage.setItem(LINK_RETURN, `${location.pathname}${location.search}`);
+    location.assign("/account/#login");
+    return;
+  }
+  if (codeNode) codeNode.textContent = code;
+  if (panel) panel.hidden = false;
+  approve?.addEventListener("click", async () => {
+    const current = await api.auth.getSession();
+    const token = current.data?.session?.refresh_token;
+    if (!token) {
+      say("Sign in again, then approve.");
+      return;
+    }
+    approve.disabled = true;
+    say("Approving…");
+    const { error } = await api.rpc("ccar_link_approve", { p_code: code, p_refresh_token: token });
+    if (error) {
+      const message = String(error.message || "Could not approve the link.").split(token).join("");
+      say(message);
+      approve.disabled = false;
+      return;
+    }
+    say("You can return to the game.");
+  });
 }
 
 async function forgotPassword(event) {
@@ -554,6 +629,7 @@ document.querySelectorAll("[data-reel]").forEach((scroller) => {
 });
 
 bindAccount();
+bindLink();
 refreshWho().then(() => {
   paintAccountButton();
   paintAccountHome();
